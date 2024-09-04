@@ -45,15 +45,26 @@ Model Options:
                         certain tables. (can be set multiple times) e.g.
                         --struct-name-override "foo bar"
                         --struct-name-override "bar baz"
-
-Proto Options:
     -d, --derive DERIVES
                         set struct derives
-    -t, --add-table-name 
+    -t, --add-table-name
                         Add #[table_name = x] before structs
-    -r, --rust_styled_model_fields 
+    -a, --struct-attribute "FULL STRUCT ATTRIBUTE"
+                        Add attribute before structs. (can be set multiple
+                        times) e.g. -a "#[allow(non_camel_case_types)]" -a
+                        "#[cfg(target_os = "linux")]"
+    -r, --rust_styled_model_fields
                         When creating models fields, will use rust styled
                         names instead of database styled names
+    -v, --diesel_version 1 or 2
+                        Set diesel version (default:2)
+
+Proto Options:
+    -p, --proto         Set as proto output
+    -i, --into_proto    Set as into_proto output
+    -f, --from_proto    Set as from_proto output
+    -c, --class_name CLASS_NAME
+                        Set proto class name
 ```
 
 (You can see it again by `diesel_ext --help`)

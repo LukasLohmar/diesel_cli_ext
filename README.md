@@ -40,16 +40,31 @@ Model Options:
                         (NOT ready)This field adds derives for certain tables.
                         (can be set multiple times) e.g. --derive-mod
                         "table_name +Debug" --derive-mod "table_name2 -Debug"
+    -n, --struct-name-override "STRUCT NAME OVERRIDE"
+                        This field overrides the generated struct name for
+                        certain tables. (can be set multiple times) e.g.
+                        --struct-name-override "foo bar"
+                        --struct-name-override "bar baz"
     -d, --derive DERIVES
                         set struct derives
+    -t, --add-table-name
+                        Add #[table_name = x] before structs
+    -a, --struct-attribute "FULL STRUCT ATTRIBUTE"
+                        Add attribute before structs. (can be set multiple
+                        times) e.g. -a "#[allow(non_camel_case_types)]" -a
+                        "#[cfg(target_os = "linux")]"
     -r, --rust_styled_model_fields
-                        set struct field names to be styled according to Rust guidelines
+                        When creating models fields, will use rust styled
+                        names instead of database styled names
+    -v, --diesel_version 1 or 2
+                        Set diesel version (default:2)
 
 Proto Options:
-    -t, --add-table-name 
-                        Add #[table_name = x] before structs
     -p, --proto         Set as proto output
     -i, --into_proto    Set as into_proto output
+    -f, --from_proto    Set as from_proto output
+    -c, --class_name CLASS_NAME
+                        Set proto class name
 ```
 
 (You can see it again by `diesel_ext --help`)
