@@ -24,6 +24,7 @@ pub struct ParseArguments {
     pub contents: String,
     pub action: String,
     pub model_derives: Option<String>,
+    pub struct_attributes: Vec<String>,
     pub add_table_name: bool,
     pub model_type_mapping: HashMap<String, String>,
     pub diesel_version: String,
@@ -37,6 +38,7 @@ impl Default for ParseArguments {
             contents: Default::default(),
             action: Default::default(),
             model_derives: Default::default(),
+            struct_attributes: Default::default(),
             add_table_name: Default::default(),
             model_type_mapping: Default::default(),
             diesel_version: "2".into(),
@@ -242,6 +244,13 @@ pub fn parse(args: ParseArguments) -> ParseOutput {
                         vec[0].split('.').last().unwrap()
                     ));
                 }
+            }
+
+            for val in args.struct_attributes.iter() {
+                str_model.push_str(&format!(
+                    "{}\n",
+                    val
+                ));
             }
 
             str_model.push_str(&format!(
@@ -670,6 +679,24 @@ mod tests {
         assert_eq!(
             parse_output.str_model,
             file_get_contents("test_data/expected_output/schema_with_tablename_derives.rs")
+        );
+    }
+
+    #[test]
+    fn build_with_struct_attributes() {
+        let parse_output = super::parse(ParseArguments {
+            contents: file_get_contents("test_data/schema.rs"),
+            action: "model".into(),
+            struct_attributes: vec![
+                "#[allow(non_camel_case_types)]".to_owned(),
+                "#[cfg(target_os = \"linux\")]".to_owned()
+            ],
+            ..Default::default()
+        });
+        print!("a:{}", parse_output.str_model);
+        assert_eq!(
+            parse_output.str_model,
+            file_get_contents("test_data/expected_output/schema_with_struct_attributes.rs")
         );
     }
 

@@ -17,8 +17,8 @@ pub fn custom_opts_usage(iopts: Options, brief: &str) -> String {
             "{}\n\nCommon Options:\n{}\n\nModel Options:\n{}\n\nProto Options:\n{}\n",
             brief,
             full_param[0..2].join("\n"),
-            full_param[2..7].join("\n"),
-            full_param[7..10].join("\n"),
+            full_param[2..12].join("\n"),
+            full_param[12..16].join("\n"),
         )
     })
 }
@@ -130,22 +130,28 @@ fn main() {
         "add-table-name",
         "Add #[table_name = x] before structs",
     );
+    opts.optmulti(
+        "a",
+        "struct-attribute",
+        "Add attribute before structs. (can be set multiple times) e.g. -a \"#[allow(non_camel_case_types)]\" -a \"#[cfg(target_os = \"linux\")]\"",
+        "\"FULL STRUCT ATTRIBUTE\""
+    );
     opts.optflag(
         "r",
         "rust_styled_model_fields",
         "When creating models fields, will use rust styled names instead of database styled names",
     );
-
-    opts.optflag("p", "proto", "Set as proto output");
-    opts.optflag("i", "into_proto", "Set as into_proto output");
-    opts.optflag("f", "from_proto", "Set as from_proto output");
-    opts.optopt("c", "class_name", "Set proto class name", "CLASS_NAME");
     opts.optopt(
         "v",
         "diesel_version",
         "Set diesel version (default:2)",
         "1 or 2",
     );
+
+    opts.optflag("p", "proto", "Set as proto output");
+    opts.optflag("i", "into_proto", "Set as into_proto output");
+    opts.optflag("f", "from_proto", "Set as from_proto output");
+    opts.optopt("c", "class_name", "Set proto class name", "CLASS_NAME");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -173,6 +179,13 @@ fn main() {
         for x in matches.opt_strs("n") {
             let k: Vec<&str> = x.trim().split(' ').collect();
             struct_name_override.insert(k[0].to_string(), k[1].to_string());
+        }
+    }
+
+    let mut struct_attributes: Vec<String> = Vec::new();
+    if matches.opt_present("a") {
+        for x in matches.opt_strs("a") {
+            struct_attributes.push(x);
         }
     }
 
@@ -237,6 +250,7 @@ fn main() {
         contents,
         action: action.into(),
         model_derives,
+        struct_attributes,
         add_table_name: matches.opt_present("t"),
         model_type_mapping,
         diesel_version,
